@@ -8,7 +8,6 @@ usecase "Просмотр\n ленты новостей" as showNews
 usecase "Просмотр подробной\n информации о событии" as showMoreEv
 usecase "Просмотр подробной\n информации о новости" as showMoreNews
 usecase "Добавление события в\nсписок "Желаю посетить"" as addEv
-usecase ""Отслеживать" \nорганизаторов" as follow
 usecase "Управление\n настройками уведомлений" as notify
 usecase "Комментирование новости" as comment
 usecase "Оценить новость" as like
@@ -21,7 +20,6 @@ stu --> showNews
 stu --> showMoreEv
 stu --> showMoreNews
 stu --> addEv
-follow <- stu
 notify <- stu
 stu -> comment
 stu -> like
