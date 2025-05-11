@@ -8,15 +8,16 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.9.0",
-    "bootstrap": "^5.3.5",
+    "bootstrap": "^5.3.6",
     "help": "^3.0.2",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.3",
+    "react-router-dom": "^7.6.0",
     "react-scripts": "^5.0.1",
+    "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
