@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #e0e7f3; /* Светло-серый фон (можете изменить) */
+}
+
+#root {
+  min-height: 100vh;
+}

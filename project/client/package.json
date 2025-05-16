@@ -10,6 +10,7 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "help": "^3.0.2",
+    "jwt-decode": "^4.0.0",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
     "react": "^19.1.0",

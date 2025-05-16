@@ -8,9 +8,34 @@ const User = sequelize.define('user', {
     role: {type: DataTypes.STRING, defaultValue:"USER"},
 })
 
+// server/models/models.js
 const Watchlist = sequelize.define('watchlist', {
-    id: {type: DataTypes.INTEGER, primaryKey:true, autoIncrement:true},
-})
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    userId: { 
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'userId', // Явно указываем имя поля в БД
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
+    eventpostId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'eventpostId', // Явно указываем имя поля в БД
+      references: {
+        model: 'eventposts',
+        key: 'id'
+      }
+    }
+}, {
+    // Убираем underscored: true, так как используем camelCase
+    tableName: 'watchlists', // Явно указываем имя таблицы
+    timestamps: true, // createdAt и updatedAt
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+});
 
 const EventPost = sequelize.define('eventpost', {
     id: {type: DataTypes.INTEGER, primaryKey:true, autoIncrement:true},

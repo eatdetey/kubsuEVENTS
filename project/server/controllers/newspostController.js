@@ -4,25 +4,41 @@ const path = require('path')
 const { stat } = require('fs')
 
 class NewsPostController{
-    async create(req, res, next) {
+    async create(req, res) {
         try {
-            const {userId, title, description, likes} = req.body
-            const newspost = await NewsPost.create({userId, title, description, likes})
-            return res.json(newspost)
+        const { title, description } = req.body;
+        const news = await NewsPost.create({ title, description });
+        return res.json(news);
         } catch (e) {
-            next(ApiError.badRequest(e.message))
+        console.error(e);
+        return res.status(500).json({ message: 'Ошибка при создании новости' });
         }
     }
 
     async getAll(req, res) {
-        const newsposts = await NewsPost.findAll()
-        return res.json(newsposts)
+        try {
+        const news = await NewsPost.findAll();
+        return res.json(news);
+        } catch (e) {
+        console.error(e);
+        return res.status(500).json({ message: 'Ошибка при получении новостей' });
+        }
     }
-    
+
     async getOne(req, res) {
-        const {id} = req.params
-        const eventpost = await EventPost.findOne({where: {id}})
-        return res.json(eventpost)
+        try {
+        const { id } = req.params;
+        const news = await NewsPost.findByPk(id); // Альтернатива findOne
+        
+        if (!news) {
+            return res.status(404).json({ message: 'Новость не найдена' });
+        }
+        
+        return res.json(news);
+        } catch (e) {
+        console.error('Ошибка при получении новости:', e);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+        }
     }
 }
 
