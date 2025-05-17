@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload')
 const router = require('./routes/index')
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
 const path = require('path')
+const scheduleEmailReminders = require('./cron/emailReminderJob')
 
 const PORT = process.env.PORT || 5000
 
@@ -30,4 +31,5 @@ const start = async () => {
     }
 }
 
+scheduleEmailReminders()
 start()

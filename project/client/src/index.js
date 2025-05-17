@@ -1,12 +1,12 @@
 import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import UserEvent from './event/UserEvent';
-import Events from './event/Events';
+import UserEvent from './store/UserEvent';
+import Events from './store/Events';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import './index.css'
-import News from './event/News';
+import News from './store/News';
 
 export const Context = createContext(null);
 

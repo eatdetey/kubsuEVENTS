@@ -2,7 +2,7 @@ import {$authHost, $host} from "./index";
 import { jwtDecode } from "jwt-decode";
 
 export const registration = async (email, password) => {
-    const {data} = await $host.post('api/user/registration', {email, password, role: 'USER'})
+    const {data} = await $host.post('api/user/registration', {email, password, role: 'MOD'})
     localStorage.setItem('token', data.token)
     return jwtDecode(data.token)
 }
@@ -30,11 +30,6 @@ export const updateProfile = async (updateData) => {
 };
 
 export const fetchWatchlist = async () => {
-  try {
-    const { data } = await $authHost.get('api/user/watchlist');
-    return Array.isArray(data) ? data.filter(item => item.event_post) : [];
-  } catch (e) {
-    console.error('Fetch watchlist error:', e);
-    throw e;
-  }
+  const { data } = await $authHost.get('api/user/watchlist');
+  return data;
 };

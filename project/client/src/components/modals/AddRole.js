@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Dropdown, Col, Row } from "react-bootstrap";
 
 const options = [
-  { label: "Организатор", value: "ADMIN" },
-  { label: "Репортер", value: "MODERATOR" },
-  { label: "Пользователь", value: "USER" },
+  { label: "ADMIN", value: "ADMIN" },
+  { label: "MOD", value: "MOD" },
+  { label: "USER", value: "USER" },
 ];
 
 const AddRole = ({ show, onHide }) => {

@@ -20,8 +20,10 @@ const NewsItem = ({ news }) => {
       >
         <Card.Body>
           <Card.Title>{news.title}</Card.Title>
-          <Card.Text className="text-truncate">
-            {news.description}
+          <Card.Text>
+            {news.description.length > 300 
+              ? news.description.slice(0, 300) + '...'
+              : news.description}
           </Card.Text>
           <div className="d-flex justify-content-between align-items-center">
             <span className="text-muted">Лайков: {news.likes}</span>

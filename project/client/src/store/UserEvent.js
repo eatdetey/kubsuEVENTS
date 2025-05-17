@@ -14,10 +14,14 @@ export default class UserEvent {
         this._user = user
     }
 
+    get role() {
+    return this._user.role
+    }
+
     get isAuth() {
         return this._isAuth
     }
     get user() {
-        return this._isAuth
+        return this._user
     }
 }

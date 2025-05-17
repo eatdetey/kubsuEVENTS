@@ -16,11 +16,8 @@ const Events = observer(() => {
   return (
     <Container className="mt-4">
       <h2 className="text-center">События</h2>
-        <Row className="mt-2">
-            <Col md={3}>
-                <TypeBar />
-            </Col>
-            <Col md={9}>
+        <Row className="mt-4">
+            <Col md={12}>
                 <EventList />
             </Col>
         </Row>

@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Container, Card, Spinner, Button, Form, Alert, Tab, Tabs } from "react-bootstrap";
+import { Container, Card, Spinner, Button, Form, Alert, Tab, Tabs, ListGroup } from "react-bootstrap";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
-import { fetchProfile, updateProfile, fetchWatchlist } from "../http/userAPI";
-import EventList from "../components/EventList";
+import { fetchProfile, updateProfile } from "../http/userAPI";
+import { fetchWatchlist, removeFromWatchlist } from "../http/watchlistAPI";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = observer(() => {
@@ -20,19 +20,17 @@ const UserProfile = observer(() => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Загружаем профиль
         const profileData = await fetchProfile();
         if (!profileData) throw new Error('Профиль не найден');
         
         setProfile(profileData);
         setFormData({ email: profileData.email });
 
-        // Загружаем watchlist
         try {
           const watchlistData = await fetchWatchlist();
-          // Фильтруем null и undefined
+          // предполагаем, что watchlistData — массив с объектами, где eventpost — объект с инфо о событии
           const validWatchlist = (watchlistData || []).filter(item => 
-            item?.event_post && item.event_post.id
+            item?.eventpost && item.eventpost.id
           );
           setWatchlist(validWatchlist);
         } catch (watchlistErr) {
@@ -65,6 +63,15 @@ const UserProfile = observer(() => {
       user.setUser(updatedProfile);
     } catch (e) {
       setProfileError(e.response?.data?.message || 'Ошибка обновления профиля');
+    }
+  };
+
+  const handleRemove = async (eventId) => {
+    try {
+      await removeFromWatchlist(eventId);
+      setWatchlist(prev => prev.filter(item => item.eventpost.id !== eventId));
+    } catch (error) {
+      alert("Ошибка при удалении из избранного");
     }
   };
 
@@ -136,7 +143,7 @@ const UserProfile = observer(() => {
                 <>
                   <p><strong>Email:</strong> {profile.email}</p>
                   <p><strong>Роль:</strong> {profile.role}</p>
-                  <p><strong>Дата регистрации:</strong> {new Date(profile.created_at).toLocaleDateString()}</p>
+                  <p><strong>Дата регистрации:</strong> {new Date(profile.createdAt).toLocaleDateString()}</p>
                   
                   <Button variant="outline-primary" onClick={() => setEditMode(true)}>
                     Редактировать профиль
@@ -146,14 +153,25 @@ const UserProfile = observer(() => {
             </Tab>
 
             <Tab eventKey="watchlist" title="Избранные мероприятия">
-              {watchlistError ? (
-                <Alert variant="danger">{watchlistError}</Alert>
-              ) : watchlist.length > 0 ? (
-                <EventList 
-                  events={watchlist.map(item => item.event_post).filter(Boolean)} 
-                />
+              {watchlistError && <Alert variant="danger">{watchlistError}</Alert>}
+              {!watchlist.length ? (
+                <p>У вас нет избранных мероприятий.</p>
               ) : (
-                <p className="text-muted">У вас пока нет сохраненных мероприятий</p>
+                <ListGroup>
+                  {watchlist.map(item => (
+                    <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5>{item.eventpost.title}</h5>
+                        <p>{item.eventpost.description.length > 150 ? 
+                          item.eventpost.description.slice(0, 150) + '...' : item.eventpost.description}</p>
+                        <small>Место: {item.eventpost.place}</small>
+                      </div>
+                      <Button variant="danger" size="sm" onClick={() => handleRemove(item.eventpost.id)}>
+                        Удалить
+                      </Button>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
               )}
             </Tab>
           </Tabs>

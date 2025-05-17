@@ -7,7 +7,7 @@ const fs = require('fs');
 class EventPostController {
     async create(req, res, next) {
     try {
-        const { title, userId, description, start_time, place, status } = req.body;
+        const { title, userId, description, starts, place, status } = req.body;
         
         let fileName = null;
         if (req.files?.img) {
@@ -32,7 +32,7 @@ class EventPostController {
             title,
             userId,
             description,
-            start_time,
+            starts,
             place,
             status,
             img: fileName // Будет null, если файл не загружен
@@ -49,6 +49,25 @@ class EventPostController {
             next(ApiError.badRequest(e.message));
         }
     }   
+
+    async update(req, res) {
+        try {
+        const { id } = req.params;
+        const data = req.body;
+        const event = await EventPost.findByPk(id);
+
+        if (!event) {
+            return res.status(404).json({ message: 'Событие не найдено' });
+        }
+
+        // Обновление полей
+        await event.update(data);
+        return res.json(event);
+        } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Ошибка при обновлении события' });
+        }
+    }
 
     async getAll(req, res) {
     try {

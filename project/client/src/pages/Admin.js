@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Container, Card } from "react-bootstrap";
 import CreateEventPost from "../components/modals/CreateEventPost";
 import CreateNewsPost from "../components/modals/CreateNewsPost";
 import AddRole from "../components/modals/AddRole";
+import { Context } from "..";
 
 const Admin = () => {
   const [eventVisible, setEventVisible] = useState(false);
   const [newsVisible, setNewsVisible] = useState(false);
   const [addRoleVisible, setAddRoleVisible] = useState(false);
+  const { user } = useContext(Context)
 
   return (
     <Container 
@@ -23,31 +25,39 @@ const Admin = () => {
         className="p-4"
       >
         <Card.Body className="d-flex flex-column">
+          {user.role === 'ADMIN' ? (
+            <>
+              <Button 
+                variant={"primary"} 
+                className="mt-2 mb-2"
+                onClick={() => setEventVisible(true)}
+                style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
+              >
+                Добавить пост в календарь событий
+              </Button>
+              <Button 
+                variant={"primary"} 
+                className="mt-2 mb-2"
+                onClick={() => setAddRoleVisible(true)}
+                style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
+              >
+                Выдать роль пользователю
+              </Button>
+            </>
+          ) : (
+            console.log(null)
+          )}
+
           <Button 
-            variant={"primary"} 
-            className="mt-2 mb-2"
-            onClick={() => setEventVisible(true)}
-            style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
-          >
-            Добавить пост в календарь событий
-          </Button>
-          <Button 
-            variant={"primary"} 
-            className="mt-2 mb-2"
-            onClick={() => setNewsVisible(true)}
-            style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
-          >
-            Добавить пост в ленту новостей
-          </Button>
-          <Button 
-            variant={"primary"} 
-            className="mt-2 mb-2"
-            onClick={() => setAddRoleVisible(true)}
-            style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
-          >
-            Выдать роль пользователю
-          </Button>
+                variant={"primary"} 
+                className="mt-2 mb-2"
+                onClick={() => setNewsVisible(true)}
+                style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
+              >
+                Добавить пост в ленту новостей
+              </Button>
         </Card.Body>
+
       </Card>
 
       <CreateEventPost show={eventVisible} onHide={() => setEventVisible(false)}/>

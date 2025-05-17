@@ -1,4 +1,3 @@
-
 import { $host, $authHost } from "./index";
 
 export const createNews = async (news) => {
@@ -18,6 +17,6 @@ export const fetchOneNews = async (id) => {
     title: data.title,
     description: data.description,
     likes: data.likes,
-    createdAt: data.last_updated // Используем ваше поле
+    createdAt: data.last_updated
   };
 };
