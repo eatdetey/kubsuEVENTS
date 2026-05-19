@@ -1,12 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchOneNews } from '../http/newsAPI';
+import { fetchOneNews, likePost } from '../http/newsAPI';
 import { Container, Card, Spinner, Button } from 'react-bootstrap';
 
 const NewsPost = () => {
   const [newsItem, setNewsItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+
+  const handleLike = async () => {
+    const likedKey = `liked_post_${id}`;
+
+    if (localStorage.getItem(likedKey)) {
+        alert("Вы уже лайкнули это событие");
+        return;
+    }
+
+    try {
+        const data = await likePost(id);
+        setNewsItem({ ...newsItem, likes: data.likes });
+        localStorage.setItem(likedKey, 'true');
+    } catch (err) {
+        console.error('Ошибка при лайке:', err);
+    }
+};
+
 
   useEffect(() => {
     fetchOneNews(id)
@@ -39,7 +57,7 @@ const NewsPost = () => {
           <div className="d-flex justify-content-between align-items-center">
             <Button 
               variant="primary"
-              onClick={() => console.log('Лайк!')} // Здесь будет логика лайков
+              onClick={handleLike} // Здесь будет логика лайков
             >
               ❤️ Лайк ({newsItem.likes})
             </Button>

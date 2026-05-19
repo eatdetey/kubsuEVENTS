@@ -1,12 +1,15 @@
 const Router = require('express')
 const router = new Router()
 const newspostController = require('../controllers/newspostController')
-const checkroleMiddleware = require('../middleware/checkRoleMiddleware')
+const { requireAuth, requireRole } = require('../middleware/auth')
+const { ROLES } = require('../constants/roles')
 
-router.post('/', checkroleMiddleware(['ADMIN', 'MOD']), newspostController.create)
+router.post('/', requireRole(ROLES.EDITOR, ROLES.MOD, ROLES.ADMIN), newspostController.create)
 router.get('/', newspostController.getAll)
 router.get('/:id', newspostController.getOne)
-router.put('/:id', checkroleMiddleware(['ADMIN', 'MOD']), newspostController.update)
-router.delete('/:id', checkroleMiddleware(['ADMIN']), newspostController.delete)
+router.put('/:id', requireRole(ROLES.EDITOR, ROLES.MOD, ROLES.ADMIN), newspostController.update)
+router.delete('/:id', requireRole(ROLES.MOD, ROLES.ADMIN), newspostController.delete)
+router.post('/like/:id', requireAuth, newspostController.like);
+
 
 module.exports = router

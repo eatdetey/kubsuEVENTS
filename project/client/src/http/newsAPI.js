@@ -20,3 +20,8 @@ export const fetchOneNews = async (id) => {
     createdAt: data.last_updated
   };
 };
+
+export const likePost = async (id) => {
+    const { data } = await $authHost.post(`api/newspost/like/${id}`);
+    return data;
+};

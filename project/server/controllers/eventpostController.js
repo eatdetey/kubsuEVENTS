@@ -106,7 +106,7 @@ class EventPostController {
                 return next(ApiError.notFound('Запись не найдена'));
             }
 
-            // Добавляем полный URL к изображению
+            await eventpost.increment('views');
             const imageUrl = `${req.protocol}://${req.get('host')}/static/${eventpost.img}`;
             return res.json({ ...eventpost.get(), img: imageUrl });
 

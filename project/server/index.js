@@ -8,6 +8,8 @@ const router = require('./routes/index')
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
 const path = require('path')
 const scheduleEmailReminders = require('./cron/emailReminderJob')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./swagger')
 
 const PORT = process.env.PORT || 5000
 
@@ -17,7 +19,7 @@ app.use(express.json())
 app.use('/static', express.static(path.join(__dirname, 'static')))
 app.use(fileUpload({}))
 app.use('/api', router)
-app.use(cors())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(errorHandler)
 

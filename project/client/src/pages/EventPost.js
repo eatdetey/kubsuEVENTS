@@ -67,6 +67,7 @@ const EventPost = () => {
                         </Button>
                         )}
                         {(user.role === 'ADMIN' || event.userId === user.id) && (
+                        <>
                         <Button
                             variant="warning"
                             className="mt-2"
@@ -77,6 +78,8 @@ const EventPost = () => {
                         >
                             Редактировать
                         </Button>
+                        <p>Просмотров: {event.views}</p>
+                        </>
                         )}
                     </Col>
                     <Col md={8} sm={12}>

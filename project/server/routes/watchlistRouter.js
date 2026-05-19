@@ -1,10 +1,10 @@
 const Router = require('express');
 const router = new Router();
 const watchlistController = require('../controllers/watchlistController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { requireAuth } = require('../middleware/auth');
 
-router.post('/', authMiddleware, watchlistController.addToWatchlist);
-router.delete('/:eventId', authMiddleware, watchlistController.removeFromWatchlist);
-router.get('/', authMiddleware, watchlistController.getMyWatchlist);
+router.post('/', requireAuth, watchlistController.addToWatchlist);
+router.delete('/:eventId', requireAuth, watchlistController.removeFromWatchlist);
+router.get('/', requireAuth, watchlistController.getMyWatchlist);
 
 module.exports = router;

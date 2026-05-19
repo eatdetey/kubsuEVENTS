@@ -1,5 +1,6 @@
 const { NewsPost, User } = require('../models/models')
 const ApiError = require('../error/ApiError')
+const { ROLES } = require('../constants/roles')
 
 class NewsPostController {
     async create(req, res, next) {
@@ -59,8 +60,7 @@ class NewsPostController {
                 return next(ApiError.notFound('Новость не найдена'))
             }
             
-            // Проверка прав доступа
-            if (req.user.role === 'MOD' && news.userId !== req.user.id) {
+            if (req.user.role === ROLES.EDITOR && news.userId !== req.user.id) {
                 return next(ApiError.forbidden('Можно редактировать только свои новости'))
             }
             
@@ -84,7 +84,7 @@ class NewsPostController {
                 return next(ApiError.notFound('Новость не найдена'))
             }
             
-            if (req.user.role === 'MOD' && news.userId !== req.user.id) {
+            if (req.user.role === ROLES.EDITOR && news.userId !== req.user.id) {
                 return next(ApiError.forbidden('Можно удалять только свои новости'))
             }
             
@@ -94,6 +94,24 @@ class NewsPostController {
             next(ApiError.internal(e.message))
         }
     }
+
+    async like(req, res) {
+        try {
+            const { id } = req.params;
+            const news = await NewsPost.findByPk(id);
+
+            if (!news) {
+            return res.status(404).json({ message: "Событие не найдено" });
+            }
+
+            await news.increment('likes');
+            res.json({ likes: news.likes + 1 });
+        } catch (error) {
+            console.error("Ошибка при лайке:", error);
+            res.status(500).json({ message: "Ошибка при добавлении лайка" });
+        }
+    }
+
 }
 
 module.exports = new NewsPostController()
