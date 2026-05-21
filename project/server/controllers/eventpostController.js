@@ -3,12 +3,19 @@ const ApiError = require('../error/ApiError');
 const uuid = require('uuid');
 const path = require('path');
 const fs = require('fs');
+const { extractEventGeoFields } = require('../utils/eventGeoFields');
 
 class EventPostController {
     async create(req, res, next) {
     try {
         const { title, userId, description, starts, place, status } = req.body;
-        
+
+        // Stage 3 — geo / registration fields validation.
+        const { fields: geoFields, error: geoError } = extractEventGeoFields(req.body);
+        if (geoError) {
+            return res.status(400).json({ message: geoError });
+        }
+
         let fileName = null;
         if (req.files?.img) {
             const { img } = req.files;
@@ -35,7 +42,8 @@ class EventPostController {
             starts,
             place,
             status,
-            img: fileName // Будет null, если файл не загружен
+            img: fileName, // Будет null, если файл не загружен
+            ...geoFields
         });
 
         return res.json({
@@ -53,11 +61,27 @@ class EventPostController {
     async update(req, res) {
         try {
         const { id } = req.params;
-        const data = req.body;
         const event = await EventPost.findByPk(id);
 
         if (!event) {
             return res.status(404).json({ message: 'Событие не найдено' });
+        }
+
+        // Stage 3 — validate geo / registration fields against the stored
+        // registration_required, then merge the normalized values into the
+        // update payload.
+        const { fields: geoFields, error: geoError } = extractEventGeoFields(
+            req.body,
+            event.registration_required
+        );
+        if (geoError) {
+            return res.status(400).json({ message: geoError });
+        }
+        const data = { ...req.body, ...geoFields };
+        // If max_participants was dropped by the validator (registration not
+        // required), make sure the raw body value does not slip through.
+        if (geoFields.max_participants === undefined) {
+            delete data.max_participants;
         }
 
         // Обновление полей
