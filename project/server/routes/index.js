@@ -4,10 +4,14 @@ const userRouter = require('./userRouter')
 const eventpostRouter = require('./eventpostRouter')
 const newspostRouter = require('./newspostRouter')
 const watchlistRouter = require('./watchlistRouter')
+const likesRouter = require('../modules/likes/likes.routes')
 
 router.use('/user', userRouter)
 router.use('/eventpost', eventpostRouter)
 router.use('/newspost', newspostRouter)
 router.use('/watchlist', watchlistRouter)
+
+// Stage 3 modules — absolute paths, mounted at the /api root.
+router.use('/', likesRouter)
 
 module.exports = router
