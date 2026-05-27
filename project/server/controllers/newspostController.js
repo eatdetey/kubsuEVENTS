@@ -95,23 +95,8 @@ class NewsPostController {
         }
     }
 
-    async like(req, res) {
-        try {
-            const { id } = req.params;
-            const news = await NewsPost.findByPk(id);
-
-            if (!news) {
-            return res.status(404).json({ message: "Событие не найдено" });
-            }
-
-            await news.increment('likes');
-            res.json({ likes: news.likes + 1 });
-        } catch (error) {
-            console.error("Ошибка при лайке:", error);
-            res.status(500).json({ message: "Ошибка при добавлении лайка" });
-        }
-    }
-
+    // Legacy `like` action removed: the integer counter was dropped in Stage 1
+    // and replaced by the dedicated likes module (modules/likes/*).
 }
 
 module.exports = new NewsPostController()
