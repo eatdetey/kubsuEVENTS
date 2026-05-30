@@ -6,6 +6,11 @@ const { ROLES } = require('../../constants/roles');
 const asyncHandler = require('../../utils/asyncHandler');
 
 // Admin user management. Mounted at the /api root.
+router.get(
+  '/users',
+  requireRole(ROLES.ADMIN),
+  asyncHandler(usersController.list)
+);
 router.patch(
   '/users/:userId/role',
   requireRole(ROLES.ADMIN),

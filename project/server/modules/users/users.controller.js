@@ -3,6 +3,11 @@ const { parseIntId } = require('../../utils/validate');
 const ServiceError = require('../../utils/ServiceError');
 
 class UsersController {
+  async list(req, res) {
+    const users = await usersService.listUsers();
+    return res.status(200).json(users);
+  }
+
   async changeRole(req, res) {
     const targetUserId = parseIntId(req.params.userId, 'userId');
     const { role } = req.body || {};

@@ -23,14 +23,16 @@ const Auth = observer(() => {
             } else {
                 data = await registration(email, password);
             }
-            user.setUser(user)
+            // Pass the decoded JWT payload — NOT the store instance. Passing
+            // `user` here would set this._user = this on the store, and the
+            // `role` getter (returns this._user.role) would recurse, triggering
+            // "[MobX] Cycle detected in computation UserEvent.role".
+            user.setUser(data)
             user.setIsAuth(true)
             history(EVENT_ROUTE)
         } catch (e) {
-            alert(e.response.data.message)
+            alert(e.response?.data?.message || e.message || 'Ошибка авторизации')
         }
-        
-        
     }
 
   return (

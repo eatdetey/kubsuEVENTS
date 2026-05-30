@@ -1,35 +1,57 @@
-import React from "react";
-import { Card, Col } from "react-bootstrap";
+import React from 'react';
+import { Button, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { NEWSPOST_ROUTE } from "../utils/consts";
+import { NEWSPOST_ROUTE } from '../utils/consts';
+import LikeButton from './LikeButton';
+import { CalendarIcon, NewspaperIcon } from './icons/Icons';
 
 const NewsItem = ({ news }) => {
   const navigate = useNavigate();
-  
+  const open = () => navigate(`${NEWSPOST_ROUTE}/${news.id}`);
+  const primaryCategory = news.categories?.[0]?.name;
+  const date = news.last_updated || news.createdAt;
+
   return (
-    <Col md={4} className="mt-3">
-      <Card 
-        style={{ 
-          width: '100%', 
-          cursor: 'pointer',
-          minHeight: '300px',
-          transition: 'transform 0.2s'
-        }}
-        className="hover-shadow"
-        onClick={() => navigate(`${NEWSPOST_ROUTE}/${news.id}`)}
-      >
-        <Card.Body>
-          <Card.Title>{news.title}</Card.Title>
-          <Card.Text>
-            {news.description.length > 300 
-              ? news.description.slice(0, 300) + '...'
-              : news.description}
-          </Card.Text>
-          <div className="d-flex justify-content-between align-items-center">
-            <span className="text-muted">Лайков: {news.likes}</span>
+    <Col xs={12} md={6} lg={4} style={{ marginBottom: 24 }}>
+      <article className="media-card" onClick={open}>
+        {/* News rows have no cover image field on the server — always show
+            the newspaper placeholder. Adding a real cover_url column is a
+            backend task for a future iteration. */}
+        <div className="media-card__cover-wrap">
+          <div className="media-card__cover-placeholder">
+            <NewspaperIcon size={56} />
           </div>
-        </Card.Body>
-      </Card>
+          {primaryCategory && (
+            <span className="media-card__cover-badge">{primaryCategory}</span>
+          )}
+        </div>
+
+        <div className="media-card__body">
+          <h3 className="media-card__title">{news.title}</h3>
+
+          <div className="media-card__meta">
+            {date && (
+              <span className="media-card__meta-item">
+                <CalendarIcon className="inline-icon" />
+                {new Date(date).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+
+          <p className="media-card__excerpt">{news.description || ''}</p>
+
+          <div className="media-card__footer">
+            <Button
+              variant="primary"
+              className="btn-rounded-md"
+              onClick={(e) => { e.stopPropagation(); open(); }}
+            >
+              Читать
+            </Button>
+            <LikeButton newsPostId={news.id} />
+          </div>
+        </div>
+      </article>
     </Col>
   );
 };

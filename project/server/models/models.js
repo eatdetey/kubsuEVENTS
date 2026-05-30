@@ -187,27 +187,55 @@ const CrosspostLog = sequelize.define('crosspost_log', {
     updatedAt: false,
 });
 
-const Watchlist = sequelize.define('watchlist', {
+// Favorite — formerly Watchlist. Internal Sequelize model name stays
+// 'watchlist' so the auto-generated `event.Watchlists` accessor used by
+// cron/emailReminderJob.js keeps working. Registration-only fields
+// (ticket_uuid / is_attended / registered_at) moved to EventRegistration
+// in migration 20260601120001.
+const Favorite = sequelize.define('watchlist', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     notified: { type: DataTypes.BOOLEAN, defaultValue: false },
+});
+// Legacy alias: old imports still using `Watchlist` keep compiling without
+// edits. Remove once every caller has migrated to `Favorite`.
+const Watchlist = Favorite;
+
+// New table for QR-based event registrations. Created in the same migration
+// as the Favorite split.
+const EventRegistration = sequelize.define('event_registration', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     ticket_uuid: {
         type: DataTypes.UUID,
         allowNull: false,
-        defaultValue: DataTypes.UUIDV4,
         unique: true,
+        defaultValue: DataTypes.UUIDV4,
     },
     is_attended: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    registered_at: { type: DataTypes.DATE, allowNull: true },
+    registered_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+}, {
+    tableName: 'event_registrations',
+    underscored: true,
+    timestamps: false,
 });
 
-User.belongsToMany(EventPost, { through: Watchlist, as: 'Favorites' });
-EventPost.belongsToMany(User, { through: Watchlist });
+User.belongsToMany(EventPost, { through: Favorite, as: 'Favorites' });
+EventPost.belongsToMany(User, { through: Favorite });
 
-Watchlist.belongsTo(User);
-Watchlist.belongsTo(EventPost);
+Favorite.belongsTo(User);
+Favorite.belongsTo(EventPost);
 
-User.hasMany(Watchlist);
-EventPost.hasMany(Watchlist);
+User.hasMany(Favorite);
+EventPost.hasMany(Favorite);
+
+// Event registrations (separate from favorites since the split migration).
+EventRegistration.belongsTo(User, { foreignKey: 'user_id' });
+EventRegistration.belongsTo(EventPost, { foreignKey: 'event_post_id' });
+User.hasMany(EventRegistration, { foreignKey: 'user_id' });
+EventPost.hasMany(EventRegistration, { foreignKey: 'event_post_id' });
 
 NewsPost.belongsTo(User);
 User.hasMany(NewsPost);
@@ -276,7 +304,9 @@ EventPost.hasMany(EventCrosspostTarget, { foreignKey: 'event_post_id' });
 
 module.exports = {
     User,
-    Watchlist,
+    Favorite,
+    Watchlist, // legacy alias for Favorite, kept until callers migrate
+    EventRegistration,
     EventPost,
     NewsPost,
     Like,

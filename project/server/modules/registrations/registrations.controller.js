@@ -51,6 +51,11 @@ class RegistrationsController {
     });
     return res.status(200).json(result);
   }
+
+  async listMyRegistrations(req, res) {
+    const result = await registrationsService.listMyRegistrations(req.user.id);
+    return res.status(200).json(result);
+  }
 }
 
 module.exports = new RegistrationsController();

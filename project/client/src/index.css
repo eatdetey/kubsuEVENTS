@@ -1,10 +1,357 @@
+/* ============================================================
+ * Design tokens — soft blue / white palette matching the ВКР mockups.
+ * Override Bootstrap's primary palette and add reusable utility classes.
+ * ============================================================ */
+:root {
+  --color-bg: #f7f8fc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eef2fb;
+  --color-border: #e6eaf3;
+  --color-text-primary: #1a1f36;
+  --color-text-secondary: #5b6478;
+  --color-text-muted: #8b94a8;
+
+  --color-primary: #4f7df0;
+  --color-primary-hover: #3d6bdb;
+  --color-primary-soft: #e8eefe;
+  --color-success: #1ea672;
+  --color-danger: #e44b4b;
+  --color-danger-soft: #fde7e7;
+  --color-warning: #d6a330;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 1px 3px rgba(20, 30, 60, 0.04), 0 1px 2px rgba(20, 30, 60, 0.06);
+  --shadow-hover: 0 4px 12px rgba(20, 30, 60, 0.08);
+}
+
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background-color: #e0e7f3; /* Светло-серый фон (можете изменить) */
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* ---- Bootstrap primary palette override ----------------------- */
+.btn-primary {
+  --bs-btn-bg: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-primary-hover);
+  --bs-btn-hover-border-color: var(--color-primary-hover);
+  --bs-btn-active-bg: var(--color-primary-hover);
+  --bs-btn-active-border-color: var(--color-primary-hover);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-primary);
+  --bs-btn-hover-border-color: var(--color-primary);
+}
+
+/* ---- Reusable building blocks --------------------------------- */
+.app-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.app-card.is-interactive { cursor: pointer; }
+.app-card.is-interactive:hover { box-shadow: var(--shadow-hover); }
+
+.section-heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+/* ---- Category pill (used by /api/categories filter UI) -------- */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.tag-pill.is-active {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+.tag-pill:hover:not(.is-active):not(:disabled) {
+  background: #d5e1fc;
+}
+.tag-pill:disabled { opacity: 0.6; cursor: default; }
+
+/* ---- Like button --------------------------------------------- */
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.like-btn:hover:not(:disabled) { background: var(--color-surface-muted); }
+.like-btn.is-active {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-color: var(--color-danger-soft);
+}
+.like-btn:disabled { cursor: wait; opacity: 0.75; }
+.like-btn .like-icon { font-size: 1rem; line-height: 1; }
+.like-btn--lg { padding: 10px 20px; font-size: 1rem; }
+.like-btn--lg .like-icon { font-size: 1.4rem; }
+
+/* ============================================================
+ * Stage 5 — large rounded "media" cards for events and news.
+ * Cover image on top, body underneath, soft shadow, hover lift.
+ * ============================================================ */
+.media-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.media-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+}
+.media-card__cover-wrap {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #c2d3f7, #e8eefe);
+  overflow: hidden;
+}
+.media-card__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.media-card__cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(20, 30, 60, 0.4);
+}
+.media-card__cover-placeholder svg {
+  width: 56px;
+  height: 56px;
+}
+.media-card__cover-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 500;
+  max-width: calc(100% - 24px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.media-card__body {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.media-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+.media-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+.media-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.media-card__excerpt {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.media-card__footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Round 40px icon-only button — used for the favorites heart. */
+.icon-btn-round {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.icon-btn-round:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+  color: var(--color-danger);
+}
+.icon-btn-round.is-active {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-color: var(--color-danger-soft);
+}
+.icon-btn-round svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.15s ease;
+}
+.icon-btn-round:hover:not(:disabled) svg { transform: scale(1.15); }
+
+/* Large detail-page favorite button — outline ↔ soft-fill toggle. */
+.fav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.fav-btn:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+  color: var(--color-danger);
+}
+.fav-btn.is-active {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-color: var(--color-danger-soft);
+}
+.fav-btn:disabled { cursor: wait; opacity: 0.75; }
+
+/* Stage 5 standard rounded button — 12px radius, comfy padding. */
+.btn-rounded-md {
+  border-radius: 12px !important;
+  padding: 10px 20px !important;
+}
+.btn-block-full { width: 100%; }
+
+/* Inline icons in meta rows. */
+.inline-icon { width: 14px; height: 14px; flex-shrink: 0; }
+.inline-icon--md { width: 18px; height: 18px; }
+
+/* Badge tones used on cards / detail pages. */
+.badge-soft {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-soft--info     { background: var(--color-primary-soft); color: var(--color-primary); }
+.badge-soft--warn     { background: #fff3dc; color: #b87900; }
+.badge-soft--danger   { background: var(--color-danger-soft); color: var(--color-danger); }
+.badge-soft--muted    { background: var(--color-surface-muted); color: var(--color-text-secondary); }
+
+/* Profile page chrome. */
+.profile-section { margin-bottom: 40px; }
+.avatar-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Per-role badge palette. */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.role-badge--USER     { background: #e6eaf3; color: #5b6478; }
+.role-badge--EDITOR   { background: #e8eefe; color: #4f7df0; }
+.role-badge--MOD      { background: #fff3dc; color: #b87900; }
+.role-badge--SECURITY { background: #dff6ea; color: #1ea672; }
+.role-badge--ADMIN    { background: #fde7e7; color: #e44b4b; }
+
+/* News detail uses a more comfortable body line-height (15px / 1.8). */
+.article-body {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+  white-space: pre-line;
+}
+.article-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 32px 0 24px;
 }

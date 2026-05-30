@@ -10,30 +10,46 @@
 function extractEventGeoFields(body = {}, currentRegistrationRequired = false) {
   const fields = {};
 
+  // Empty string is treated as an explicit "clear the coordinate" signal —
+  // the map picker on the client sends "" when the user removes the marker
+  // on an event that previously had a pin.
   if (body.latitude !== undefined && body.latitude !== null) {
-    const lat = Number(body.latitude);
-    if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
-      return { error: 'latitude must be a number between -90 and 90' };
+    if (body.latitude === '') {
+      fields.latitude = null;
+    } else {
+      const lat = Number(body.latitude);
+      if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
+        return { error: 'latitude must be a number between -90 and 90' };
+      }
+      fields.latitude = lat;
     }
-    fields.latitude = lat;
   }
 
   if (body.longitude !== undefined && body.longitude !== null) {
-    const lon = Number(body.longitude);
-    if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
-      return { error: 'longitude must be a number between -180 and 180' };
+    if (body.longitude === '') {
+      fields.longitude = null;
+    } else {
+      const lon = Number(body.longitude);
+      if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
+        return { error: 'longitude must be a number between -180 and 180' };
+      }
+      fields.longitude = lon;
     }
-    fields.longitude = lon;
   }
 
   // Effective flag: the incoming value if present, otherwise what is stored.
+  // Accept literal booleans (JSON requests) and "true"/"false" strings
+  // (multipart form-data, which can't carry real booleans).
   let effectiveRegistration = currentRegistrationRequired;
   if (body.registration_required !== undefined) {
-    if (typeof body.registration_required !== 'boolean') {
+    let val = body.registration_required;
+    if (val === 'true') val = true;
+    else if (val === 'false') val = false;
+    if (typeof val !== 'boolean') {
       return { error: 'registration_required must be a boolean' };
     }
-    fields.registration_required = body.registration_required;
-    effectiveRegistration = body.registration_required;
+    fields.registration_required = val;
+    effectiveRegistration = val;
   }
 
   if (body.max_participants !== undefined && body.max_participants !== null) {

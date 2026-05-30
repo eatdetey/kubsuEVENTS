@@ -1,70 +1,112 @@
-import React, { useContext, useState } from "react";
-import { Button, Container, Card } from "react-bootstrap";
-import CreateEventPost from "../components/modals/CreateEventPost";
-import CreateNewsPost from "../components/modals/CreateNewsPost";
-import AddRole from "../components/modals/AddRole";
-import { Context } from "..";
+import React, { useContext, useState } from 'react';
+import { Container, Button, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import { Context } from '..';
+import CreateEventPost from '../components/modals/CreateEventPost';
+import CreateNewsPost from '../components/modals/CreateNewsPost';
+import { ROLES, ADMIN_CATEGORIES_ROUTE, ADMIN_USERS_ROUTE } from '../utils/consts';
+import { useHasRole } from '../utils/roles';
 
-const Admin = () => {
+// Admin hub. The route itself is restricted to EDITOR/MOD/ADMIN — the
+// individual cards then check finer-grained permissions before rendering.
+const Admin = observer(() => {
+  const { user } = useContext(Context);
+  const navigate = useNavigate();
   const [eventVisible, setEventVisible] = useState(false);
   const [newsVisible, setNewsVisible] = useState(false);
-  const [addRoleVisible, setAddRoleVisible] = useState(false);
-  const { user } = useContext(Context)
+
+  const canCreateEvent = useHasRole(ROLES.MOD, ROLES.ADMIN);
+  const canCreateNews = useHasRole(ROLES.EDITOR, ROLES.MOD, ROLES.ADMIN);
+  const canManageCategories = useHasRole(ROLES.MOD, ROLES.ADMIN);
+  const isAdmin = useHasRole(ROLES.ADMIN);
+
+  const Card = ({ title, description, action }) => (
+    <Col xs={12} md={6} lg={4} className="mb-3">
+      <div className="app-card p-3 h-100 d-flex flex-column">
+        <h3 className="mb-1" style={{ fontSize: '1.1rem', fontWeight: 600 }}>{title}</h3>
+        <p className="flex-grow-1" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+          {description}
+        </p>
+        {action}
+      </div>
+    </Col>
+  );
 
   return (
-    <Container 
-      className="d-flex justify-content-center align-items-center" 
-      style={{ minHeight: "80vh" }}
-    >
-      <Card 
-        style={{ 
-          width: "100%", 
-          maxWidth: "500px", 
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)"
-        }}
-        className="p-4"
-      >
-        <Card.Body className="d-flex flex-column">
-          {user.role === 'ADMIN' ? (
-            <>
-              <Button 
-                variant={"primary"} 
-                className="mt-2 mb-2"
-                onClick={() => setEventVisible(true)}
-                style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
-              >
-                Добавить пост в календарь событий
-              </Button>
-              <Button 
-                variant={"primary"} 
-                className="mt-2 mb-2"
-                onClick={() => setAddRoleVisible(true)}
-                style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
-              >
-                Выдать роль пользователю
-              </Button>
-            </>
-          ) : (
-            console.log(null)
-          )}
+    <Container className="mt-4" style={{ maxWidth: 1100 }}>
+      <h2 className="mb-1" style={{ fontWeight: 700 }}>Админ-панель</h2>
+      <p className="mb-4" style={{ color: 'var(--color-text-muted)' }}>
+        Привет, <strong>{user.user?.username || user.user?.email}</strong>. Ваша роль: <code>{user.role}</code>.
+      </p>
 
-          <Button 
-                variant={"primary"} 
-                className="mt-2 mb-2"
+      <Row>
+        {canCreateNews && (
+          <Card
+            title="Новый пост в новостях"
+            description="Опубликовать новость. EDITOR редактирует только свои; MOD и ADMIN — любые."
+            action={
+              <Button
+                variant="primary"
+                style={{ borderRadius: 'var(--radius-pill)' }}
                 onClick={() => setNewsVisible(true)}
-                style={{ backgroundColor: "#0d6efd", borderColor: "#0d6efd" }}
               >
-                Добавить пост в ленту новостей
+                Создать новость
               </Button>
-        </Card.Body>
+            }
+          />
+        )}
+        {canCreateEvent && (
+          <Card
+            title="Новое мероприятие"
+            description="Создать событие. Доступно для MOD и ADMIN."
+            action={
+              <Button
+                variant="primary"
+                style={{ borderRadius: 'var(--radius-pill)' }}
+                onClick={() => setEventVisible(true)}
+              >
+                Создать мероприятие
+              </Button>
+            }
+          />
+        )}
+        {canManageCategories && (
+          <Card
+            title="Категории"
+            description="Управлять списком категорий: добавлять, переименовывать, удалять (только ADMIN)."
+            action={
+              <Button
+                variant="outline-primary"
+                style={{ borderRadius: 'var(--radius-pill)' }}
+                onClick={() => navigate(ADMIN_CATEGORIES_ROUTE)}
+              >
+                Открыть
+              </Button>
+            }
+          />
+        )}
+        {isAdmin && (
+          <Card
+            title="Пользователи и роли"
+            description="Просмотреть всех пользователей и менять их роли."
+            action={
+              <Button
+                variant="outline-primary"
+                style={{ borderRadius: 'var(--radius-pill)' }}
+                onClick={() => navigate(ADMIN_USERS_ROUTE)}
+              >
+                Открыть
+              </Button>
+            }
+          />
+        )}
+      </Row>
 
-      </Card>
-
-      <CreateEventPost show={eventVisible} onHide={() => setEventVisible(false)}/>
-      <CreateNewsPost show={newsVisible} onHide={() => setNewsVisible(false)}/>
-      <AddRole show={addRoleVisible} onHide={() => setAddRoleVisible(false)}/>
+      <CreateEventPost show={eventVisible} onHide={() => setEventVisible(false)} />
+      <CreateNewsPost show={newsVisible} onHide={() => setNewsVisible(false)} />
     </Container>
   );
-};
+});
 
 export default Admin;

@@ -5,6 +5,7 @@ import UserEvent from './store/UserEvent';
 import Events from './store/Events';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import 'leaflet/dist/leaflet.css';
 import './index.css'
 import News from './store/News';
 

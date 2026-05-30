@@ -1,87 +1,114 @@
-import React, { useContext } from "react";
-import { Context } from "..";
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import { Button } from 'react-bootstrap';
-import { NavLink, useNavigate } from "react-router-dom";
-import { ADMIN_ROUTE, EVENT_ROUTE, LOGIN_ROUTE, NEWS_ROUTE, USERPROFILE_ROUTE } from "../utils/consts";
-import { observer } from "mobx-react-lite";
+import React, { useContext } from 'react';
+import { Context } from '..';
+import { Container, Nav, Navbar, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import {
+  ADMIN_ROUTE,
+  EVENT_ROUTE,
+  LOGIN_ROUTE,
+  NEWS_ROUTE,
+  USERPROFILE_ROUTE,
+  ROLES,
+} from '../utils/consts';
+import { observer } from 'mobx-react-lite';
+import { useHasRole } from '../utils/roles';
 
 const NavBar = observer(() => {
-    const { user } = useContext(Context);
-    const history = useNavigate();
+  const { user } = useContext(Context);
+  const history = useNavigate();
 
-    const logOut = () => {
-        user.setUser({});
-        user.setIsAuth(false);
-        localStorage.removeItem('token');
-    };
+  // Only need to know if the user can see the admin panel link; the panel
+  // itself routes through to /admin/categories and /admin/users.
+  const isStaff = useHasRole(ROLES.EDITOR, ROLES.MOD, ROLES.ADMIN);
 
-    const isAdminOrMod = user.role === 'ADMIN' || user.role === 'MOD';
+  const logOut = () => {
+    user.setUser({});
+    user.setIsAuth(false);
+    localStorage.removeItem('token');
+  };
 
-    return (
-        <Navbar bg="primary" data-bs-theme="dark">
-            <Container>
-                <Nav className="ml-auto">
-                    <Button
-                        variant="outline-light"
-                        onClick={() => history(EVENT_ROUTE)}
-                        className="ml-2 me-2"
-                    >
-                        Календарь событий
-                    </Button>
-                    <Button
-                        variant="outline-light"
-                        onClick={() => history(NEWS_ROUTE)}
-                        className="ml-2 me-2"
-                    >
-                        Лента новостей
-                    </Button>
-                </Nav>
+  return (
+    <Navbar
+      expand="lg"
+      style={{
+        background: 'var(--color-surface)',
+        borderBottom: '1px solid var(--color-border)',
+        padding: '12px 0',
+      }}
+    >
+      <Container>
+        <Navbar.Brand
+          onClick={() => history(EVENT_ROUTE)}
+          style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--color-text-primary)' }}
+        >
+          Учебное сообщество
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="main-nav" />
+        <Navbar.Collapse id="main-nav">
+          <Nav className="me-auto">
+            <Button
+              variant="link"
+              onClick={() => history(EVENT_ROUTE)}
+              style={{ color: 'var(--color-text-secondary)', textDecoration: 'none' }}
+            >
+              События
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => history(NEWS_ROUTE)}
+              style={{ color: 'var(--color-text-secondary)', textDecoration: 'none' }}
+            >
+              Новости
+            </Button>
+          </Nav>
 
-                {user.isAuth ? (
-                    <Nav className="ml-auto">
-                        {isAdminOrMod && (
-                            <Button
-                                variant="outline-light"
-                                onClick={() => history(ADMIN_ROUTE)}
-                                className="ml-2 me-2"
-                            >
-                                Админ панель
-                            </Button>
-                        )}
-                        <Button
-                            variant="outline-light"
-                            onClick={() => history(USERPROFILE_ROUTE)}
-                            className="ml-2 me-2"
-                        >
-                            Личный кабинет
-                        </Button>
-                        <Button
-                            variant="outline-light"
-                            onClick={() => {
-                                logOut();
-                                history(EVENT_ROUTE);
-                            }}
-                            className="ml-2"
-                        >
-                            Выйти
-                        </Button>
-                    </Nav>
-                ) : (
-                    <Nav className="ml-auto">
-                        <Button
-                            variant="outline-light"
-                            onClick={() => history(LOGIN_ROUTE)}
-                        >
-                            Авторизация
-                        </Button>
-                    </Nav>
-                )}
-            </Container>
-        </Navbar>
-    );
+          {user.isAuth ? (
+            <Nav className="align-items-center" style={{ gap: 8 }}>
+              {/* "Категории" and "Пользователи" links live only on the
+                  admin dashboard (/admin) — keeps the top nav minimal. */}
+              {isStaff && (
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  style={{ borderRadius: 'var(--radius-pill)' }}
+                  onClick={() => history(ADMIN_ROUTE)}
+                >
+                  Админ панель
+                </Button>
+              )}
+              <Button
+                variant="primary"
+                size="sm"
+                style={{ borderRadius: 'var(--radius-pill)' }}
+                onClick={() => history(USERPROFILE_ROUTE)}
+              >
+                Профиль
+              </Button>
+              <Button
+                variant="link"
+                size="sm"
+                style={{ color: 'var(--color-text-secondary)', textDecoration: 'none' }}
+                onClick={() => { logOut(); history(EVENT_ROUTE); }}
+              >
+                Выйти
+              </Button>
+            </Nav>
+          ) : (
+            <Nav>
+              <Button
+                variant="primary"
+                size="sm"
+                style={{ borderRadius: 'var(--radius-pill)' }}
+                onClick={() => history(LOGIN_ROUTE)}
+              >
+                Войти
+              </Button>
+            </Nav>
+          )}
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
 });
 
 export default NavBar;

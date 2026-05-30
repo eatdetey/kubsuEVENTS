@@ -34,4 +34,12 @@ router.get(
   asyncHandler(registrationsController.listRegistrations)
 );
 
+// Personal-cabinet endpoint: returns the current user's registrations
+// with light event payloads (id/title/starts/place/img).
+router.get(
+  '/users/me/registrations',
+  requireAuth,
+  asyncHandler(registrationsController.listMyRegistrations)
+);
+
 module.exports = router;

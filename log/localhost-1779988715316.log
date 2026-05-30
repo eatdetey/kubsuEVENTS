@@ -1,0 +1,32 @@
+react-dom-client.development.js:24867 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+(index):1 Error while trying to use the following icon from the Manifest: http://localhost:3000/logo192.png (Download error or resource isn't a valid image)
+watchlistAPI.js:9  POST http://localhost:5000/api/watchlist 500 (Internal Server Error)
+dispatchXhrRequest @ xhr.js:195
+(anonymous) @ xhr.js:15
+dispatchRequest @ dispatchRequest.js:51
+Promise.then
+_request @ Axios.js:163
+request @ Axios.js:40
+httpMethod @ Axios.js:226
+wrap @ bind.js:5
+(anonymous) @ watchlistAPI.js:9
+(anonymous) @ EventItem.js:43
+executeDispatch @ react-dom-client.development.js:16368
+runWithFiberInDEV @ react-dom-client.development.js:1518
+processDispatchQueue @ react-dom-client.development.js:16417
+(anonymous) @ react-dom-client.development.js:17016
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16572
+dispatchEvent @ react-dom-client.development.js:20657
+dispatchDiscreteEvent @ react-dom-client.development.js:20625
+EventItem.js:46 Ошибка добавления в избранное: AxiosError {message: 'Request failed with status code 500', name: 'AxiosError', code: 'ERR_BAD_RESPONSE', config: {…}, request: XMLHttpRequest, …}code: "ERR_BAD_RESPONSE"config: {transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 0, …}message: "Request failed with status code 500"name: "AxiosError"request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}response: {data: {…}, status: 500, statusText: 'Internal Server Error', headers: AxiosHeaders, config: {…}, …}status: 500stack: "AxiosError: Request failed with status code 500\n    at settle (http://localhost:3000/static/js/bundle.js:5172:12)\n    at XMLHttpRequest.onloadend (http://localhost:3000/static/js/bundle.js:3799:66)\n    at Axios.request (http://localhost:3000/static/js/bundle.js:4298:41)\n    at async addToWatchlist (http://localhost:3000/static/js/bundle.js:62895:7)\n    at async handleAddToWatchlist (http://localhost:3000/static/js/bundle.js:59372:7)"[[Prototype]]: Error
+(anonymous) @ EventItem.js:46
+await in (anonymous)
+executeDispatch @ react-dom-client.development.js:16368
+runWithFiberInDEV @ react-dom-client.development.js:1518
+processDispatchQueue @ react-dom-client.development.js:16417
+(anonymous) @ react-dom-client.development.js:17016
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16572
+dispatchEvent @ react-dom-client.development.js:20657
+dispatchDiscreteEvent @ react-dom-client.development.js:20625

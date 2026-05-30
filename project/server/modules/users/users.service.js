@@ -4,7 +4,7 @@ const ServiceError = require('../../utils/ServiceError');
 
 // Only public, non-sensitive fields are ever returned — never password/email
 // hash artefacts.
-const USER_ATTRS = ['id', 'email', 'username', 'role'];
+const USER_ATTRS = ['id', 'email', 'username', 'role', 'createdAt'];
 
 function toUserDTO(user) {
   return {
@@ -12,7 +12,16 @@ function toUserDTO(user) {
     email: user.email,
     username: user.username,
     role: user.role,
+    createdAt: user.createdAt,
   };
+}
+
+async function listUsers() {
+  const users = await User.findAll({
+    attributes: USER_ATTRS,
+    order: [['createdAt', 'DESC']],
+  });
+  return users.map(toUserDTO);
 }
 
 // Admin-only: change another user's role. The caller themselves cannot be the
@@ -44,4 +53,4 @@ async function changeUserRole(adminId, targetUserId, newRole) {
   return toUserDTO(user);
 }
 
-module.exports = { changeUserRole };
+module.exports = { changeUserRole, listUsers };

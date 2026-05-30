@@ -329,7 +329,8 @@ const swaggerDocument = {
                     id: { type: 'integer' },
                     email: { type: 'string', format: 'email' },
                     username: { type: 'string', nullable: true },
-                    role: { type: 'string' }
+                    role: { type: 'string' },
+                    createdAt: { type: 'string', format: 'date-time' }
                 }
             }
         }
@@ -859,6 +860,18 @@ const swaggerDocument = {
             }
         },
 
+        '/api/users': {
+            get: {
+                tags: ['Admin'],
+                summary: 'List all users (ADMIN only)',
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    200: { description: 'List of users', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/UserPublic' } } } } },
+                    401: { description: 'Unauthorized', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+                    403: { description: 'Forbidden', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+                }
+            }
+        },
         '/api/users/{userId}/role': {
             patch: {
                 tags: ['Admin'],
